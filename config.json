@@ -1,0 +1,28 @@
+{
+  "spaced_repetition": {
+    "same_day": true,
+    "same_day_delay_hours": 4,
+    "next_day": true,
+    "weekly": true,
+    "weekly_day": "friday"
+  },
+  "questions": {
+    "per_quiz": 5,
+    "priorities": ["system_design", "counterfactual", "debugging"],
+    "use_llm_generation": false
+  },
+  "triggers": {
+    "min_session_minutes": 15,
+    "min_activities": 5,
+    "notify_when_due": true
+  },
+  "skip_friction": {
+    "require_reason": true,
+    "reasons": ["time_pressure", "already_know", "unclear", "other"]
+  },
+  "blind_spots": {
+    "weekly_report": true,
+    "weak_threshold": 0.5,
+    "strong_threshold": 0.7
+  }
+}
