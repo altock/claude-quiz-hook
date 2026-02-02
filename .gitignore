@@ -8,3 +8,12 @@ build/
 .eggs/
 *.egg
 .DS_Store
+
+# Local quiz data (per-project)
+.claude/sessions/
+.claude/summaries/
+.claude/quizzes/
+.claude/quiz-results/
+.claude/quiz-state.json
+.claude/reports/
+*.lock

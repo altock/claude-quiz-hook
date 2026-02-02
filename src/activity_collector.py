@@ -158,21 +158,24 @@ def get_session_log_path(
     if project_path:
         base = project_path
     else:
-        # Extract project path from transcript path
-        # Format: /Users/sam/.claude/projects/-Users-sam-myproject/session.jsonl
-        # Convert back to: /Users/sam/myproject
-        if transcript_path and ".claude/projects/" in transcript_path:
-            # Get the encoded project path segment
-            parts = transcript_path.split(".claude/projects/")
-            if len(parts) > 1:
-                encoded = parts[1].split("/")[0]
-                # Decode: -Users-sam-myproject -> /Users/sam/myproject
-                decoded = "/" + encoded.replace("-", "/")
-                base = Path(decoded)
-            else:
-                base = Path.cwd()
-        else:
-            base = Path.cwd()
+        # Use current working directory - hooks run in project context
+        # This is more reliable than trying to decode the transcript path
+        base = Path.cwd()
+
+        # Fallback: if cwd looks like home dir or tmp, try transcript path
+        cwd_str = str(base)
+        if cwd_str == os.path.expanduser("~") or cwd_str.startswith("/tmp"):
+            if transcript_path and ".claude/projects/" in transcript_path:
+                # Get the encoded project path segment
+                parts = transcript_path.split(".claude/projects/")
+                if len(parts) > 1:
+                    encoded = parts[1].split("/")[0]
+                    # Decode: replace only leading dash and internal -Users- etc
+                    # This is imperfect but better than nothing
+                    if encoded.startswith("-"):
+                        decoded = encoded[1:].replace("-", "/", encoded.count("-Users-") + encoded.count("-sam-"))
+                        if decoded.startswith("Users/"):
+                            base = Path("/" + decoded)
 
     sessions_dir = base / ".claude" / "sessions"
     sessions_dir.mkdir(parents=True, exist_ok=True)
